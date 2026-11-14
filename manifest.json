@@ -1,0 +1,206 @@
+{
+  "schema": "flexdcim-1",
+  "topology_file": "topology.json.gz",
+  "evidence": {
+    "kind": "structural_logic_with_illustrative_delays",
+    "timing_calibrated": false,
+    "nominal_voltage_v": 0.8,
+    "nominal_temperature_c": 50,
+    "process_corner": "TT target, not transistor modeled",
+    "assumptions": {
+      "period_ps": 10000,
+      "gate_ps": 20,
+      "write_setup_cycles": 1,
+      "write_pulse_cycles": 1,
+      "write_hold_cycles": 1,
+      "tree_start_cycles": 2,
+      "read_eval_cycles": 1,
+      "power_supply_cycles": 3,
+      "clock_start_cycles": 2,
+      "reset_release_cycles": 3,
+      "isolation_cycles": 1,
+      "power_off_cycles": 2
+    },
+    "clock_frequency_mhz": 100.0,
+    "boundary": "Boolean gates, registers, digital SRAM and dynamic-node storage abstractions. Gate delays and phase waits are explicit teaching assumptions, not measured or PEX calibrated. No physical fmax, voltage waveform, power saving, safe supply transition, or bank timing closure is proved. Original Colonnade and FlexDCIM calibration records are not modified or reused as bank timing."
+  },
+  "cases": [
+    {
+      "id": "bit1",
+      "title": "U1 \u00d7 U1: load, compute, deliver",
+      "summary": "Unsigned 1-bit inputs and weights. Follow SRAM loading, MSB-first planes, the 14-bit PSUM and 22-bit accumulation.",
+      "category": "Precision",
+      "file": "bit1.json.gz"
+    },
+    {
+      "id": "bit2",
+      "title": "U2 \u00d7 U2: load, compute, deliver",
+      "summary": "Unsigned 2-bit inputs and weights. Follow SRAM loading, MSB-first planes, the 14-bit PSUM and 22-bit accumulation.",
+      "category": "Precision",
+      "file": "bit2.json.gz"
+    },
+    {
+      "id": "bit4",
+      "title": "U4 \u00d7 U4: load, compute, deliver",
+      "summary": "Unsigned 4-bit inputs and weights. Follow SRAM loading, MSB-first planes, the 14-bit PSUM and 22-bit accumulation.",
+      "category": "Precision",
+      "file": "bit4.json.gz"
+    },
+    {
+      "id": "bit8",
+      "title": "U8 \u00d7 U8: load, compute, deliver",
+      "summary": "Unsigned 8-bit inputs and weights. Follow SRAM loading, MSB-first planes, the 14-bit PSUM and 22-bit accumulation.",
+      "category": "Precision",
+      "file": "bit8.json.gz"
+    },
+    {
+      "id": "mixed",
+      "title": "U4 input \u00d7 U2 weight: precision masking",
+      "summary": "The stored byte is unchanged. Only its two low weight bits participate; input planes still run from bit 3 to bit 0.",
+      "category": "Precision",
+      "file": "mixed.json.gz"
+    },
+    {
+      "id": "parallel",
+      "title": "Two BLKs: the complete byte-protocol example",
+      "summary": "BLKs 0 and 2 share one input vector and produce 8 and 10. The host sees two 3-byte results in BLK order.",
+      "category": "Interfaces",
+      "file": "parallel.json.gz"
+    },
+    {
+      "id": "pointwise",
+      "title": "Pointwise: three pixels and two output channels",
+      "summary": "The host sends one unsigned vector per pixel. Two BLKs retain separate kernels and reuse them across three tasks.",
+      "category": "Operator mapping",
+      "file": "pointwise.json.gz"
+    },
+    {
+      "id": "padding",
+      "title": "Short writes and inputs: remove stale tails",
+      "summary": "A short write still visits all 64 words. A short compute masks stale C-buffer positions without clearing the whole buffer.",
+      "category": "Storage",
+      "file": "padding.json.gz"
+    },
+    {
+      "id": "backpressure",
+      "title": "Stall the third result byte",
+      "summary": "The result remains in A until the actual third-byte handshake. No early acknowledgment is allowed.",
+      "category": "Interfaces",
+      "file": "backpressure.json.gz"
+    },
+    {
+      "id": "power",
+      "title": "Independent power-off, wake and weight reload",
+      "summary": "BLK 0 loses its weights while powered BLK 2 retains them. Wake alone is insufficient: reload before compute.",
+      "category": "Power",
+      "file": "power.json.gz"
+    },
+    {
+      "id": "errors_reset",
+      "title": "Bad final input and asynchronous reset recovery",
+      "summary": "An invalid final input is consumed then rejected. Reset discards a partial command; old work cannot resume.",
+      "category": "Errors and reset",
+      "file": "errors_reset.json.gz"
+    }
+  ],
+  "inventory": {
+    "nets": 324861,
+    "devices": 323187,
+    "sram_bits": 65536,
+    "blks": 16
+  },
+  "generation": {
+    "elapsed_seconds": 45.14,
+    "cases": [
+      {
+        "id": "bit1",
+        "checks": 4,
+        "events": 201848,
+        "cycles": 305,
+        "seconds": 2.029,
+        "bytes": 579768
+      },
+      {
+        "id": "bit2",
+        "checks": 4,
+        "events": 96559,
+        "cycles": 306,
+        "seconds": 1.47,
+        "bytes": 286536
+      },
+      {
+        "id": "bit4",
+        "checks": 4,
+        "events": 97441,
+        "cycles": 312,
+        "seconds": 1.142,
+        "bytes": 289602
+      },
+      {
+        "id": "bit8",
+        "checks": 4,
+        "events": 98533,
+        "cycles": 324,
+        "seconds": 1.253,
+        "bytes": 293200
+      },
+      {
+        "id": "mixed",
+        "checks": 5,
+        "events": 111546,
+        "cycles": 409,
+        "seconds": 1.323,
+        "bytes": 331696
+      },
+      {
+        "id": "parallel",
+        "checks": 6,
+        "events": 201670,
+        "cycles": 629,
+        "seconds": 2.313,
+        "bytes": 585387
+      },
+      {
+        "id": "pointwise",
+        "checks": 8,
+        "events": 237404,
+        "cycles": 713,
+        "seconds": 3.111,
+        "bytes": 686858
+      },
+      {
+        "id": "padding",
+        "checks": 7,
+        "events": 207585,
+        "cycles": 703,
+        "seconds": 2.183,
+        "bytes": 603124
+      },
+      {
+        "id": "backpressure",
+        "checks": 23,
+        "events": 100523,
+        "cycles": 329,
+        "seconds": 1.28,
+        "bytes": 297394
+      },
+      {
+        "id": "power",
+        "checks": 13,
+        "events": 313654,
+        "cycles": 1039,
+        "seconds": 5.263,
+        "bytes": 908257
+      },
+      {
+        "id": "errors_reset",
+        "checks": 8,
+        "events": 186952,
+        "cycles": 597,
+        "seconds": 2.018,
+        "bytes": 545600
+      }
+    ],
+    "sim_workers": 1
+  }
+}
